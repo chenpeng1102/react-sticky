@@ -6,6 +6,7 @@ export default class Sticky extends Component {
 
   static propTypes = {
     topOffset: PropTypes.number,
+    topFixed: PropTypes.number,
     bottomOffset: PropTypes.number,
     relative: PropTypes.bool,
     children: PropTypes.func.isRequired
@@ -13,6 +14,7 @@ export default class Sticky extends Component {
 
   static defaultProps = {
     relative: false,
+    topFixed: 0,
     topOffset: 0,
     bottomOffset: 0,
     disableCompensation: false,
@@ -61,13 +63,13 @@ export default class Sticky extends Component {
     const bottomDifference = distanceFromBottom - this.props.bottomOffset - calculatedHeight;
 
     const wasSticky = !!this.state.isSticky;
-    const isSticky = preventingStickyStateChanges ? wasSticky : (distanceFromTop <= -this.props.topOffset && distanceFromBottom > -this.props.bottomOffset);
+    const isSticky = preventingStickyStateChanges ? wasSticky : (distanceFromTop <= this.props.topOffset && distanceFromBottom > this.props.bottomOffset);
 
     distanceFromBottom = (this.props.relative ? parent.scrollHeight - parent.scrollTop : distanceFromBottom) - calculatedHeight;
 
     const style = !isSticky ? { } : {
       position: 'fixed',
-      top: bottomDifference > 0 ? (this.props.relative ? parent.offsetTop - parent.offsetParent.scrollTop : 0) : bottomDifference,
+      top: bottomDifference > 0 ? (this.props.relative ? parent.offsetTop - parent.offsetParent.scrollTop : this.props.topFixed) : bottomDifference,
       left: placeholderClientRect.left,
       width: placeholderClientRect.width
     }
